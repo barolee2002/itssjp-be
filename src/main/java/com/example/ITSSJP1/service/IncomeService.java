@@ -14,7 +14,7 @@ public interface IncomeService {
 
     Integer delete(Integer incomeId);
 
-    BasePage<IncomeDTO> get(Integer userId, String fromDate, String toDate, long min, long max, int page, int pageSize);
+    BasePage<IncomeDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize);
 
     List<IncomeStatistic> statistic(Integer userId);
 

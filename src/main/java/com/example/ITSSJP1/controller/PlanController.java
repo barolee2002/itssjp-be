@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/plan")
 @RequiredArgsConstructor
@@ -42,11 +44,17 @@ public class PlanController {
                                              @RequestParam(required = false, defaultValue = Constant.FUTURE_DATE) String toDate,
                                              @RequestParam(required = false, defaultValue = "0") long min,
                                              @RequestParam( required = false, defaultValue = "10000000000") long max,
+                                             @RequestParam( required = false, defaultValue = "") String category,
                                              @RequestParam( required = false, defaultValue = "1") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                           @PathVariable Integer userId){
-        return new Response<>(HttpStatus.OK.value(), planService.get( userId, fromDate, toDate, min, max, page, pageSize));
+                                                @PathVariable Integer userId){
+        return new Response<>(HttpStatus.OK.value(), planService.get( userId, fromDate, toDate, min, max, category, page, pageSize));
 
+    }
+
+    @GetMapping("/{userId}/category")
+    public Response<List<String>> getAllCategories(@PathVariable Integer userId){
+        return new Response<>(HttpStatus.OK.value(), planService.getAllCategory(userId));
     }
 
 }

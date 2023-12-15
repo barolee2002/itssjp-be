@@ -46,10 +46,11 @@ public class IncomeController {
                                              @RequestParam(required = false, defaultValue = Constant.FUTURE_DATE) String toDate,
                                              @RequestParam(required = false, defaultValue = "0") long min,
                                              @RequestParam( required = false, defaultValue = "10000000000") long max,
+                                             @RequestParam( required = false, defaultValue = "") String category,
                                              @RequestParam( required = false, defaultValue = "1") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize,
                                              @PathVariable Integer userId){
-        return new Response<>(HttpStatus.OK.value(), incomeService.get( userId, fromDate, toDate, min, max, page, pageSize));
+        return new Response<>(HttpStatus.OK.value(), incomeService.get( userId, fromDate, toDate, min, max,category, page, pageSize));
 
     }
 

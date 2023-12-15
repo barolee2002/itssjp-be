@@ -13,7 +13,7 @@ public interface SpendingService {
 
     Integer delete(Integer spendingId);
 
-    BasePage<SpendingDTO> get( Integer userId,String fromDate, String toDate, long min, long max, int page, int pageSize);
+    BasePage<SpendingDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize);
 
     List<SpendingStatistic> statistic(Integer userId);
 

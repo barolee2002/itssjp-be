@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,11 +70,12 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public BasePage<PlanDTO> get(Integer userId,String fromDate, String toDate, long min, long max, int page, int pageSize) {
+    public BasePage<PlanDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize) {
         if ( !Utils.isCorrectFormat(fromDate, Constant.DATE_FORMAT) || !Utils.isCorrectFormat(toDate, Constant.DATE_FORMAT))
             throw new AppException(Errors.INCORRECT_FORMAT);
+
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Planner> plannerPage = planRepo.findAll( userId,fromDate, toDate, min - 1, max + 1, pageable);
+        Page<Planner> plannerPage = planRepo.findAll( userId,fromDate, toDate, min - 1, max + 1, category, pageable);
         BasePage<PlanDTO> dataPage = new BasePage<>();
         dataPage.setTotalPages(plannerPage.getTotalPages());
         dataPage.setElements(plannerPage.getNumberOfElements());
@@ -81,5 +83,11 @@ public class PlanServiceImpl implements PlanService {
         ModelMapper mapper = new ModelMapper();
         dataPage.setData(plannerPage.get().map( planner -> mapper.map(planner, PlanDTO.class)).collect(Collectors.toList()));
         return dataPage;
+    }
+
+    @Override
+    public List<String> getAllCategory(Integer userId) {
+        List<Planner> planners = planRepo.findDistinctCategoryByUserId(userId);
+        return planners.stream().map(Planner::getCategory).toList();
     }
 }

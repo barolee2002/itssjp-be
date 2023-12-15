@@ -82,11 +82,11 @@ public class IncomeServiceImpl  implements IncomeService {
     }
 
     @Override
-    public BasePage<IncomeDTO> get(Integer userId, String fromDate, String toDate, long min, long max, int page, int pageSize) {
+    public BasePage<IncomeDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize) {
         if ( !Utils.isCorrectFormat(fromDate, Constant.DATE_FORMAT) || !Utils.isCorrectFormat(toDate, Constant.DATE_FORMAT))
             throw new AppException(Errors.INCORRECT_FORMAT);
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Income> incomePage = incomeRepo.findAll( userId,fromDate, toDate, min - 1, max + 1, pageable);
+        Page<Income> incomePage = incomeRepo.findAll( userId,fromDate, toDate, min - 1, max + 1, category , pageable);
         BasePage<IncomeDTO> dataPage = new BasePage<>();
         dataPage.setTotalElements(incomePage.getTotalElements());
         dataPage.setTotalPages(incomePage.getTotalPages());

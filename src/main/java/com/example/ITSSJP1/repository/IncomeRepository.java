@@ -14,9 +14,10 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> {
 
     @Query( nativeQuery = true, value = "SELECT * FROM income i WHERE " +
             " (i.user_id = :userId) " +
+            " AND (:category is null or :category = '' or i.category = :category) " +
             " AND ( STR_TO_DATE(i.time, '%Y-%m-%d') BETWEEN STR_TO_DATE(:fromDate , '%Y-%m-%d') AND STR_TO_DATE(:toDate, '%Y-%m-%d')) " +
             " AND ( i.amount BETWEEN :min AND :max) ")
-    Page<Income> findAll(Integer userId, String fromDate, String toDate, long min, long max, Pageable pageable);
+    Page<Income> findAll(Integer userId, String fromDate, String toDate, long min, long max, String category, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT * FROM income where user_id = :userId")
     List<Income> findByUserId(int userId);
