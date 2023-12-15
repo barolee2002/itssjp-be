@@ -1,0 +1,15 @@
+package com.example.ITSSJP1.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class IncomeStatistic {
+    private String category;
+    private long amount;
+}
