@@ -6,12 +6,15 @@ import com.example.ITSSJP1.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/user")
@@ -28,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping(value = "")
-    public Response<UserDTO> signup(@RequestBody UserDTO userDTO) {
+    public Response<UserDTOResponse> signup(@RequestBody UserDTOResponse userDTO) {
         return new Response<>(HttpStatus.CREATED.value(), userService.addUser(userDTO));
     }
 
@@ -38,11 +41,11 @@ public class UserController {
     }
 
     @PutMapping(value = "/{userId}")
-    public Response<UserDTO> update(@RequestBody UserDTO userDTO, @PathVariable Integer userId) {
+    public Response<UserDTOResponse> update(@ModelAttribute UserDTORequest userDTO, @PathVariable Integer userId) {
         return new Response<>(HttpStatus.OK.value(), userService.update(userDTO, userId));
     }
     @GetMapping( value = "/{userId}")
-    public Response<UserDTO> getInfo(@PathVariable Integer userId){
+    public Response<UserDTOResponse> getInfo(@PathVariable Integer userId){
         return new Response<>(HttpStatus.OK.value(), userService.getInfo(userId));
     }
 

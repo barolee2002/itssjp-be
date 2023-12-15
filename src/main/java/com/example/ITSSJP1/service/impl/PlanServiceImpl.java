@@ -35,7 +35,7 @@ public class PlanServiceImpl implements PlanService {
         Optional<User> userOptional = userRepo.findById(planDTO.getUserId());
         if (userOptional.isEmpty())
             throw new AppException(Errors.INVALID_DATA);
-        if ( !Utils.isCorrectFormat(planDTO.getFromTime(), Constant.DATE_FORMAT) || !Utils.isCorrectFormat(planDTO.getToTime(), Constant.DATE_FORMAT))
+        if ( !Utils.isCorrectFormat(planDTO.getTime(), Constant.DATE_FORMAT) )
             throw new AppException(Errors.INCORRECT_FORMAT);
         ModelMapper mapper = new ModelMapper();
         Planner plan = mapper.map(planDTO, Planner.class);

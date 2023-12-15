@@ -3,16 +3,17 @@ package com.example.ITSSJP1.service;
 import com.example.ITSSJP1.dto.LoginRequest;
 import com.example.ITSSJP1.dto.LoginResponse;
 import com.example.ITSSJP1.dto.Statistic;
-import com.example.ITSSJP1.dto.UserDTO;
+import com.example.ITSSJP1.dto.UserDTORequest;
+import com.example.ITSSJP1.dto.UserDTOResponse;
 
 public interface UserService {
     Statistic statistic(Integer userId);
 
-    UserDTO addUser(UserDTO userDTO);
+    UserDTOResponse addUser(UserDTOResponse userDTO);
 
     LoginResponse login(LoginRequest loginRequest);
 
-    UserDTO update(UserDTO userDTO, Integer userId);
+    UserDTOResponse update(UserDTORequest userDTO, Integer userId);
 
-    UserDTO getInfo(Integer userId);
+    UserDTOResponse getInfo(Integer userId);
 }

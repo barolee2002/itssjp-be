@@ -20,6 +20,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -49,15 +51,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO addUser(UserDTO userDTO) {
+    public UserDTOResponse addUser(UserDTOResponse userDTO) {
         if( Utils.isEmptyOrNull(userDTO.getUserName()) || Utils.isEmptyOrNull(userDTO.getPassword()))
             throw new AppException(Errors.INVALID_DATA);
+        if(userRepo.findFirstByUserName( userDTO.getUserName()) != null){
+            throw new AppException(Errors.EXIST_USER);
+        }
         ModelMapper mapper = new ModelMapper();
         User user = User.builder()
                 .userName(userDTO.getUserName())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .build();
-        return mapper.map(userRepo.save(user), UserDTO.class);
+        return mapper.map(userRepo.save(user), UserDTOResponse.class);
     }
 
     @Override
@@ -75,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO, Integer userId) {
+    public UserDTOResponse update(UserDTORequest userDTO, Integer userId) {
         ModelMapper mapper = new ModelMapper();
         Optional<User> userOptional = userRepo.findById(userId);
         if ( userOptional.isEmpty())
@@ -84,19 +89,25 @@ public class UserServiceImpl implements UserService {
         user.setUserName(Utils.isEmptyOrNull(userDTO.getUserName()) ? userDTO.getUserName() : user.getUserName());
         user.setEmail(userDTO.getEmail());
         user.setAddress(userDTO.getAddress());
-        user.setAvatarUrl(userDTO.getAvatarUrl());
+        if (Objects.nonNull(userDTO.getAvatarUrl())) {
+            try {
+                user.setAvatarUrl( userDTO.getAvatarUrl().getBytes() );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         user.setFullName(userDTO.getFullName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        return mapper.map(userRepo.save(user), UserDTO.class);
+        return mapper.map(userRepo.save(user), UserDTOResponse.class);
     }
 
     @Override
-    public UserDTO getInfo(Integer userId) {
+    public UserDTOResponse getInfo(Integer userId) {
         Optional<User> userOptional = userRepo.findById(userId);
         if(userOptional.isEmpty())
             throw new AppException(Errors.INVALID_DATA);
         ModelMapper mapper = new ModelMapper();
-        return mapper.map(userOptional.get(), UserDTO.class);
+        return mapper.map(userOptional.get(), UserDTOResponse.class);
     }
 
 

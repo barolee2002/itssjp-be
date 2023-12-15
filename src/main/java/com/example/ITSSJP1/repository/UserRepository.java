@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     @Query( nativeQuery = true, value = "select * from user where user_name = :username limit 1")
     Optional<User> findByUserName(String username);
+
+    User findFirstByUserName(String userName);
 }

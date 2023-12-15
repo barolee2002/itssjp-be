@@ -1,6 +1,6 @@
 package com.example.ITSSJP1.simulator;
 
-import com.example.ITSSJP1.dto.UserDTO;
+import com.example.ITSSJP1.dto.UserDTOResponse;
 import com.example.ITSSJP1.entity.User;
 
 public class UserObject {
@@ -16,8 +16,8 @@ public class UserObject {
                 .avatarUrl("http://localhost:8080/image")
                 .build();
     }
-    public static UserDTO getDTO(){
-        return UserDTO.builder()
+    public static UserDTOResponse getDTO(){
+        return UserDTOResponse.builder()
                 .id(1)
                 .email("vp@gmail.com")
                 .total(100000L)

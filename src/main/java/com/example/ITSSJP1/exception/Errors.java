@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum Errors {
     USER_NOT_FOUND("USER NOT FOUND", HttpStatus.BAD_REQUEST.value()),
     INVALID_DATA("INVALID DATA", HttpStatus.BAD_REQUEST.value()),
+    EXIST_USER( "EXIST USER", HttpStatus.BAD_REQUEST.value()),
     INCORRECT_FORMAT("INCORRECT FORMAT", HttpStatus.BAD_REQUEST.value());
     private String errorDes;
     private int status;
