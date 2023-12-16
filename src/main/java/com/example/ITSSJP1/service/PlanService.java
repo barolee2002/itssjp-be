@@ -15,4 +15,6 @@ public interface PlanService {
     BasePage<PlanDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize);
 
     List<String> getAllCategory(Integer userId);
+
+    PlanDTO getDetail(Integer plannerId);
 }
