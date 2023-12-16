@@ -87,7 +87,7 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public List<String> getAllCategory(Integer userId) {
-        List<Planner> planners = planRepo.findDistinctCategoryByUserId(userId);
-        return planners.stream().map(Planner::getCategory).toList();
+        List<Planner> planners = planRepo.getCategory(userId);
+        return planners.stream().map(Planner::getCategory).distinct().toList();
     }
 }

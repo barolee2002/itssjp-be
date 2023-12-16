@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlanDTO {
-    private int spendingId;
+    private Integer plannerId;
     private int userId;
     private String time;
     private long amount;
