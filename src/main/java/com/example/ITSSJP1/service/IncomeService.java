@@ -19,4 +19,6 @@ public interface IncomeService {
     List<IncomeStatistic> statistic(Integer userId);
 
     IncomeDTO detail(Integer incomeId);
+
+    Object getAllCategories(Integer userId);
 }

@@ -27,4 +27,6 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> {
     List<Object[]> statisticByUserId(Integer userId);
 
     Income findFirstByCategory(String s);
+
+    List<Income> getByUserId(Integer userId);
 }

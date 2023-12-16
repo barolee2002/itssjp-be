@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +34,13 @@ public class SpendingServiceImpl implements SpendingService {
     @Override
     public SpendingDTO create(SpendingDTO spendingDTO) {
         ModelMapper mapper = new ModelMapper();
+        if( !Utils.isCorrectFormat(spendingDTO.getTime(), Constant.DATE_FORMAT))
+            throw new AppException(Errors.INCORRECT_FORMAT);
         if(Objects.isNull(spendingDTO.getUserId()))
             throw new AppException(Errors.INVALID_DATA);
-        Optional<User> userOptional = userRepo.findById(spendingDTO.getUserId());
-        if (userOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        User user = userOptional.get();
+        User user = userRepo.findById(spendingDTO.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
+
         Spending spending = mapper.map(spendingDTO, Spending.class);
-        spending.setTime(Utils.getDate(Constant.DATE_FORMAT));
         Spending savedSpending = spendingRepo.save(spending);
         user.setTotal(user.getTotal() - savedSpending.getAmount());
         userRepo.save(user);
@@ -52,18 +50,13 @@ public class SpendingServiceImpl implements SpendingService {
     @Override
     public SpendingDTO update(Integer spendingId, SpendingDTO spendingDTO) {
         ModelMapper mapper = new ModelMapper();
+        if( !Utils.isCorrectFormat(spendingDTO.getTime(), Constant.DATE_FORMAT))
+            throw new AppException(Errors.INCORRECT_FORMAT);
         if( Objects.isNull(spendingDTO.getUserId()))
             throw new AppException(Errors.INVALID_DATA);
-        Optional<Spending> spendingOptional = spendingRepo.findById(spendingDTO.getSpendingId());
-        if( spendingOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        Optional<User> userOptional = userRepo.findById(spendingDTO.getUserId());
-        if( userOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        User user = userOptional.get();
-        Spending spending = spendingOptional.get();
+        Spending spending = spendingRepo.findById(spendingDTO.getSpendingId()).orElseThrow( ()-> new AppException(Errors.INVALID_DATA));
+        User user = userRepo.findById(spendingDTO.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
         Spending newSpending = mapper.map(spendingDTO, Spending.class);
-        newSpending.setTime(Utils.getDate(Constant.DATE_FORMAT));
         user.setTotal(user.getTotal() - newSpending.getAmount() + spending.getAmount());
         return mapper.map(spendingRepo.save(newSpending), SpendingDTO.class);
     }
@@ -74,7 +67,7 @@ public class SpendingServiceImpl implements SpendingService {
         if( spendingOptional.isEmpty())
             throw new AppException(Errors.INVALID_DATA);
         Spending spending = spendingOptional.get();
-        User user = userRepo.findById(spending.getUserId()).get();
+        User user = userRepo.findById(spending.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
         user.setTotal(user.getTotal() + spending.getAmount());
         userRepo.save(user);
         spendingRepo.delete(spending);
@@ -92,14 +85,13 @@ public class SpendingServiceImpl implements SpendingService {
         dataPage.setElements(spendingPage.getNumberOfElements());
         dataPage.setTotalElements(spendingPage.getTotalElements());
         ModelMapper mapper = new ModelMapper();
-        dataPage.setData(spendingPage.get().map(spending -> mapper.map(spending, SpendingDTO.class)).collect(Collectors.toList()));
+        dataPage.setData(spendingPage.get().map(spending -> mapper.map(spending, SpendingDTO.class)).toList());
         return dataPage;
     }
 
     @Override
     public List<SpendingStatistic> statistic(Integer userId) {
-        Optional<User> userOptional = userRepo.findById(userId);
-        if( userOptional.isEmpty())
+        if( userRepo.findById(userId).isEmpty())
             throw new AppException(Errors.INVALID_DATA);
         List<Object[]> data = spendingRepo.statistic(userId);
         List<SpendingStatistic> spendingStatistics= new ArrayList<>();

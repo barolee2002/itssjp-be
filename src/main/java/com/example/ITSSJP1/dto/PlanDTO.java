@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlanDTO {
     private Integer plannerId;
-    private int userId;
+    private Integer userId;
     private String time;
     private long amount;
     private String category;
