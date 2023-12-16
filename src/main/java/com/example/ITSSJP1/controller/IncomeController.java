@@ -66,7 +66,7 @@ public class IncomeController {
 
     @GetMapping( "/{userId}/category")
     public Response<List<String>> getAllCategories(@PathVariable Integer userId){
-        return new response<>(HttpStatus.OK.value(), incomeService.getAllCategories(userId));
+        return new Response<>(HttpStatus.OK.value(), incomeService.getAllCategories(userId));
     }
 
 }

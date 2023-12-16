@@ -20,5 +20,5 @@ public interface IncomeService {
 
     IncomeDTO detail(Integer incomeId);
 
-    Object getAllCategories(Integer userId);
+    List<String> getAllCategories(Integer userId);
 }

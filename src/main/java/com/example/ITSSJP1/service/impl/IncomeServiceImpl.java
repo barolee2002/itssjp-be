@@ -114,7 +114,7 @@ public class IncomeServiceImpl  implements IncomeService {
     }
 
     @Override
-    public Object getAllCategories(Integer userId) {
+    public List<String> getAllCategories(Integer userId) {
         List<Income> incomeList = incomeRepo.getByUserId(userId);
         return incomeList.stream().map(Income::getCategory).distinct().toList();
     }
