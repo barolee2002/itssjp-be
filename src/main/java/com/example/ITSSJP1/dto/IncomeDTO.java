@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IncomeDTO {
-    private int incomeId;
+    private Integer incomeId;
     private Integer userId;
     private String time;
     private long amount;

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +33,12 @@ public class IncomeServiceImpl  implements IncomeService {
     @Override
     public IncomeDTO create(IncomeDTO incomeDTO) throws AppException{
         ModelMapper mapper = new ModelMapper();
+        if( !Utils.isCorrectFormat(incomeDTO.getTime(), Constant.DATE_FORMAT))
+            throw new AppException(Errors.INCORRECT_FORMAT);
         if( Objects.isNull(incomeDTO.getUserId()))
             throw new AppException(Errors.INVALID_DATA);
-        Optional<User> userOptional = userRepo.findById(incomeDTO.getUserId());
-        if (userOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        User user = userOptional.get();
+        User user = userRepo.findById(incomeDTO.getUserId()).orElseThrow(()->  new AppException(Errors.INVALID_DATA));
         Income income = mapper.map(incomeDTO, Income.class);
-        income.setTime(Utils.getDate(Constant.DATE_FORMAT));
         Income savedIncome = incomeRepo.save(income);
         user.setTotal(user.getTotal() + savedIncome.getAmount());
         userRepo.save(user);
@@ -51,20 +48,15 @@ public class IncomeServiceImpl  implements IncomeService {
     @Override
     public IncomeDTO update(Integer incomeId, IncomeDTO incomeDTO) {
         ModelMapper mapper = new ModelMapper();
-        if(Objects.isNull(incomeDTO)|| Objects.isNull(incomeDTO.getUserId()) || Objects.isNull(incomeDTO.getIncomeId()))
+        if( !Utils.isCorrectFormat(incomeDTO.getTime(), Constant.DATE_FORMAT))
+            throw new AppException(Errors.INCORRECT_FORMAT);
+        if( Objects.isNull(incomeDTO.getUserId()) || Objects.isNull(incomeDTO.getIncomeId()))
             throw new AppException(Errors.INVALID_DATA);
-        Optional<Income> incomeOptional = incomeRepo.findById(incomeDTO.getIncomeId());
-        if(incomeOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        Optional<User> userOptional = userRepo.findById(incomeDTO.getUserId());
-        if (userOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        User user = userOptional.get();
-        Income currentIncome = incomeOptional.get();
+        Income currentIncome = incomeRepo.findById(incomeDTO.getIncomeId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
+        User user = userRepo.findById(incomeDTO.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
         user.setTotal(user.getTotal() - currentIncome.getAmount() + incomeDTO.getAmount());
         userRepo.save(user);
         Income newIncome = mapper.map(incomeDTO, Income.class);
-        newIncome.setTime(Utils.getDate(Constant.DATE_FORMAT));
         return mapper.map(incomeRepo.save(newIncome), IncomeDTO.class);
     }
 
@@ -74,7 +66,7 @@ public class IncomeServiceImpl  implements IncomeService {
         if (incomeOptional.isEmpty())
             throw new AppException(Errors.INVALID_DATA);
         Income income = incomeOptional.get();
-        User user = userRepo.findById(income.getUserId()).get();
+        User user = userRepo.findById(income.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
         user.setTotal(user.getTotal() - income.getAmount());
         userRepo.save(user);
         incomeRepo.delete(income);
@@ -92,7 +84,7 @@ public class IncomeServiceImpl  implements IncomeService {
         dataPage.setTotalPages(incomePage.getTotalPages());
         dataPage.setElements(incomePage.getNumberOfElements());
         ModelMapper mapper = new ModelMapper();
-        dataPage.setData(incomePage.get().map(income -> mapper.map(income, IncomeDTO.class)).collect(Collectors.toList()));
+        dataPage.setData(incomePage.get().map(income -> mapper.map(income, IncomeDTO.class)).toList());
         return dataPage;
     }
 
@@ -119,6 +111,12 @@ public class IncomeServiceImpl  implements IncomeService {
         if( incomeOptional.isEmpty())
             throw new AppException(Errors.INVALID_DATA);
         return new ModelMapper().map(incomeOptional.get(), IncomeDTO.class);
+    }
+
+    @Override
+    public List<String> getAllCategories(Integer userId) {
+        List<Income> incomeList = incomeRepo.getByUserId(userId);
+        return incomeList.stream().map(Income::getCategory).distinct().toList();
     }
 
 

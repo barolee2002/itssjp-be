@@ -21,6 +21,7 @@ public class Utils {
 
     public static boolean isCorrectFormat(String value, String format) {
         DateFormat formatter = new SimpleDateFormat(format);
+        formatter.setLenient(false);
         try {
             Date parsedDate = formatter.parse(value);
             return true;
