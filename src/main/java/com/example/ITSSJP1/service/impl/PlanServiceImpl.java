@@ -24,15 +24,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
-    private final PlannerRepository  planRepo;
+    private final PlannerRepository planRepo;
     private final UserRepository userRepo;
 
     @Override
     public PlanDTO create(PlanDTO planDTO) {
-        if( Objects.isNull(planDTO.getUserId()))
-            throw new AppException(Errors.INVALID_DATA);
-        userRepo.findById(planDTO.getUserId()).orElseThrow(()-> new AppException(Errors.INVALID_DATA));
-        if ( !Utils.isCorrectFormat(planDTO.getTime(), Constant.DATE_FORMAT) )
+        if (Objects.isNull(planDTO.getUserId())) throw new AppException(Errors.INVALID_DATA);
+        userRepo.findById(planDTO.getUserId()).orElseThrow(() -> new AppException(Errors.INVALID_DATA));
+        if (!Utils.isCorrectFormat(planDTO.getTime(), Constant.DATE_FORMAT))
             throw new AppException(Errors.INCORRECT_FORMAT);
         ModelMapper mapper = new ModelMapper();
         Planner plan = mapper.map(planDTO, Planner.class);
@@ -41,14 +40,11 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanDTO update(Integer planId, PlanDTO planDTO) {
-        if( Objects.isNull(planDTO.getUserId()))
-            throw new AppException(Errors.INVALID_DATA);
-        if (userRepo.findById(planDTO.getUserId()).isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
+        if (Objects.isNull(planDTO.getUserId())) throw new AppException(Errors.INVALID_DATA);
+        if (userRepo.findById(planDTO.getUserId()).isEmpty()) throw new AppException(Errors.INVALID_DATA);
         Optional<Planner> plannerOptional = planRepo.findById(planId);
-        if( plannerOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
-        if( !Utils.isCorrectFormat( planDTO.getTime(), Constant.DATE_FORMAT))
+        if (plannerOptional.isEmpty()) throw new AppException(Errors.INVALID_DATA);
+        if (!Utils.isCorrectFormat(planDTO.getTime(), Constant.DATE_FORMAT))
             throw new AppException(Errors.INCORRECT_FORMAT);
         ModelMapper mapper = new ModelMapper();
         Planner planner = mapper.map(planDTO, Planner.class);
@@ -60,25 +56,24 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public Integer delete(Integer planId) {
         Optional<Planner> plannerOptional = planRepo.findById(planId);
-        if( plannerOptional.isEmpty())
-            throw new AppException(Errors.INVALID_DATA);
+        if (plannerOptional.isEmpty()) throw new AppException(Errors.INVALID_DATA);
         planRepo.delete(plannerOptional.get());
         return planId;
     }
 
     @Override
     public BasePage<PlanDTO> get(Integer userId, String fromDate, String toDate, long min, long max, String category, int page, int pageSize) {
-        if ( !Utils.isCorrectFormat(fromDate, Constant.DATE_FORMAT) || !Utils.isCorrectFormat(toDate, Constant.DATE_FORMAT))
+        if (!Utils.isCorrectFormat(fromDate, Constant.DATE_FORMAT) || !Utils.isCorrectFormat(toDate, Constant.DATE_FORMAT))
             throw new AppException(Errors.INCORRECT_FORMAT);
 
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Planner> plannerPage = planRepo.findAll( userId,fromDate, toDate, min - 1, max + 1, category, pageable);
+        Page<Planner> plannerPage = planRepo.findAll(userId, fromDate, toDate, min - 1, max + 1, category, pageable);
         BasePage<PlanDTO> dataPage = new BasePage<>();
         dataPage.setTotalPages(plannerPage.getTotalPages());
         dataPage.setElements(plannerPage.getNumberOfElements());
         dataPage.setTotalElements(plannerPage.getTotalElements());
         ModelMapper mapper = new ModelMapper();
-        dataPage.setData(plannerPage.get().map( planner -> mapper.map(planner, PlanDTO.class)).toList());
+        dataPage.setData(plannerPage.get().map(planner -> mapper.map(planner, PlanDTO.class)).toList());
         return dataPage;
     }
 
@@ -86,5 +81,12 @@ public class PlanServiceImpl implements PlanService {
     public List<String> getAllCategory(Integer userId) {
         List<Planner> planners = planRepo.getCategory(userId);
         return planners.stream().map(Planner::getCategory).distinct().toList();
+    }
+
+    @Override
+    public PlanDTO getDetail(Integer plannerId) {
+        Planner planner = planRepo.findById(plannerId).orElseThrow(() -> new AppException(Errors.INVALID_DATA));
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(planner, PlanDTO.class);
     }
 }
