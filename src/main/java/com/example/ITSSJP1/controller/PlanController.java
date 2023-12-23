@@ -57,7 +57,7 @@ public class PlanController {
         return new Response<>(HttpStatus.OK.value(), planService.getAllCategory(userId));
     }
 
-    @GetMapping( "/{plannerId}")
+    @GetMapping( "/detail/{plannerId}")
     public Response<PlanDTO> getDetail(@PathVariable Integer plannerId){
         return new Response<>(HttpStatus.OK.value(), planService.getDetail(plannerId));
     }

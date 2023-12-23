@@ -13,7 +13,7 @@ public class UserObject {
                 .userName("phuctv")
                 .password("password")
                 .fullName("fullName")
-                .avatarUrl("http://localhost:8080/image")
+//                .avatarUrl("http://localhost:8080/image")
                 .build();
     }
     public static UserDTOResponse getDTO(){
@@ -24,7 +24,7 @@ public class UserObject {
                 .address("TH")
                 .userName("phuctv")
                 .fullName("fullName")
-                .avatarUrl("http://localhost:8080/image")
+//                .avatarUrl("http://localhost:8080/image")
                 .build();
     }
 }
