@@ -89,6 +89,8 @@ public class UserServiceImpl implements UserService {
         user.setUserName(Utils.isEmptyOrNull(userDTO.getUserName()) ? userDTO.getUserName() : user.getUserName());
         user.setEmail(userDTO.getEmail());
         user.setAddress(userDTO.getAddress());
+        user.setFullName(userDTO.getFullName());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         if (Objects.nonNull(userDTO.getAvatarUrl())) {
             try {
                 user.setAvatarUrl( userDTO.getAvatarUrl().getBytes() );
@@ -96,8 +98,7 @@ public class UserServiceImpl implements UserService {
                 throw new RuntimeException(e);
             }
         }
-        user.setFullName(userDTO.getFullName());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
         return mapper.map(userRepo.save(user), UserDTOResponse.class);
     }
 
